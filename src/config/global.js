@@ -19,5 +19,9 @@ INVALID:{
         code:300,
         message:"is Invalid"
     },
+NOT_FOUND:{
+        code:350,
+        message:"Not Found"
+    },
 }
 export default RESPONSE

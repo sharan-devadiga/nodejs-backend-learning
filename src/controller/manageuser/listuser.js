@@ -2,12 +2,16 @@ import { Router } from "express";
 import initUserModel from "../../model/userModel.js";
 import { send } from "../../helper/responseHelper.js";
 import RESPONSE from "../../config/global.js";
-import { STATUS } from "../../config/constants.js";
+import { ROLE, STATUS } from "../../config/constants.js";
+import authenticate from '../../middlewear/authenticate.js'
 
 let router = Router();
 
-export default router.get("/", async (req, res) => {
+export default router.get("/", authenticate ,async (req, res) => {
   try {
+    if (req.user.role!=ROLE.ADMIN) {
+      return send(res,RESPONSE.ACCESS_DENIED)
+    }
     let where = {
       isActive: STATUS.ACTIVE,
     };

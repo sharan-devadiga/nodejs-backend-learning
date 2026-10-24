@@ -2,15 +2,23 @@ import { Router } from "express";
 import initUserModel from "../../model/userModel.js";
 import { send, setErrMsg } from "../../helper/responseHelper.js";
 import RESPONSE from "../../config/global.js";
-import { STATUS } from "../../config/constants.js";
+import { ROLE, STATUS } from "../../config/constants.js";
+import authenticate from '../../middlewear/authenticate.js'
 import { Op } from "sequelize";
 
 let router = Router();
 
-export default router.patch("/", async (req, res) => {
+export default router.patch("/", authenticate ,async (req, res) => {
   try {
-    let { user_id } = req.query;
+
+    let user_id = req.user.user_id;
     let { name, email, role, age } = req.body;
+
+    if (req.user.role==ROLE.STAFF) {
+      if (role) {
+        return send(res,setErrMsg(RESPONSE.INVALID,"Role"))
+      }
+    }
 
     let usermodel = await initUserModel();
 

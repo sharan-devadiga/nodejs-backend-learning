@@ -3,6 +3,7 @@ import initUserModel from "../../model/userModel.js";
 import { send, setErrMsg } from "../../helper/responseHelper.js";
 import RESPONSE from "../../config/global.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken"
 import { STATUS } from "../../config/constants.js";
 
 let router = Router();
@@ -28,7 +29,14 @@ export default router.post("/", async (req, res) => {
     if (!isPasswordValid) {
       return send(res, setErrMsg(RESPONSE.INVALID, "Password"));
     }
-    return send(res,RESPONSE.SUCCESS)
+
+    let token=jwt.sign({
+      user_id:userData.user_id,
+      role:userData.role,
+      name:userData.name
+    },process.env.SECRET_KEY)
+    
+    return send(res,RESPONSE.SUCCESS,token)
   } catch (error) {
     console.log("Login Error:",error);
     

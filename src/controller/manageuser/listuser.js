@@ -12,10 +12,18 @@ export default router.get("/", authenticate ,async (req, res) => {
     if (req.user.role!=ROLE.ADMIN) {
       return send(res,RESPONSE.ACCESS_DENIED)
     }
+
+    
     let where = {
       isActive: STATUS.ACTIVE,
     };
     let { user_id } = req.query;
+
+    let page=Number(req.query.page)||1;
+    let limit=Number(req.query.limit)||10
+
+    let offset=(page-1)*limit;
+
     if (user_id) {
       where = { user_id: user_id, isActive: STATUS.ACTIVE };
     }
@@ -24,6 +32,8 @@ export default router.get("/", authenticate ,async (req, res) => {
     let data = await usermodel.findAll({
       attributes: ["user_id", "name", "email", "age", "role"],
       where: where,
+      offset:offset,
+      limit,
     });
     return send(res, RESPONSE.SUCCESS, data);
   } catch (error) {

@@ -14,6 +14,9 @@ export default router.patch("/", authenticate, async (req, res) => {
     if (req.user.role == ROLE.STAFF) {
       user_id = req.user.user_id;
     } 
+    if (req.user.role!==ROLE.STAFF&&req.user.role!==ROLE.ADMIN) {
+      return send(res,setErrMsg(RESPONSE.INVALID,"Role"))
+    }
     let { name, email, age } = req.body;
 
     let usermodel = await initUserModel();
